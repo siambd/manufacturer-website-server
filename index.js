@@ -266,3 +266,32 @@ async function run() {
         const reviews = await cursor.toArray();
         res.send(reviews);
       })
+
+      app.get('/allorders', async (req, res) => {
+        const query = {};
+        const cursor = orderCollection.find(query);
+        const result = await cursor.toArray();
+        res.send(result);
+      })
+      app.patch('/booking/:id', verifyJWT, async (req, res) => {
+        const id = req.params.id;
+        const payment = req.body;
+        const filter = { _id: ObjectId(id) };
+        const updatedDoc = {
+          $set: {
+            paid: true,
+            transactionId: payment.transactionId
+          }
+        }
+  
+        const result = await paymentCollection.insertOne(payment);
+        const updatedBooking = await orderCollection.updateOne(filter, updatedDoc);
+        res.send(updatedBooking);
+      })
+  
+    }
+    finally {
+      // await client.close();
+    }
+  }
+  run().catch(console.dir);
