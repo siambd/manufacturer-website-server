@@ -73,3 +73,37 @@ async function run() {
       const result = await toolsCollection.insertOne(newTools);
       res.send(result);
     })
+
+    // individual Order
+    app.get('/booking', async (req, res) => {
+        const email = req.query.email;
+        const query = { email: email };
+        const bookings = await orderCollection.find(query).toArray();
+        res.send(bookings)
+      })
+      // app.get('/edituser',async(req,res)=>{
+      //   const email= req.query.email;
+      //   const query = {email:email};
+      //   const bookings = await userInfoCollection.find(query).toArray();
+      //   res.send(bookings)
+      // })
+  
+      // app.put('/edituser',async(req,res)=>{
+      //   const email= req.query.email;
+      //   updatedUser = req.body;
+      //   const query = {email:email};
+      //   const options = {upsert:true}
+      //   const updatedDoc = {
+      //     $set:updatedUser
+      //   }
+      //   const bookings = await userInfoCollection.updateOne(query,updatedDoc,options)
+      //   res.send(bookings)
+      // })
+  
+  
+      app.get('/order/:id', verifyJWT, async (req, res) => {
+        const id = req.params.id;
+        const query = { _id: ObjectId(id) };
+        const order = await orderCollection.findOne(query);
+        res.send(order);
+      })
