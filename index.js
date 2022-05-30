@@ -107,3 +107,11 @@ async function run() {
         const order = await orderCollection.findOne(query);
         res.send(order);
       })
+
+         // get edit user
+    app.get('/booking', async (req, res) => {
+        const email = req.query.email;
+        const query = { email: email };
+        const bookings = await userInfoCollection.find(query).toArray();
+        res.send(bookings);
+      })
