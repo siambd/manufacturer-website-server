@@ -224,4 +224,45 @@ async function run() {
       //   const bookings = await userInfoCollection.updateOne(query,updatedDoc,options)
       //   res.send(bookings)
       // })
+      app.post('/userInfo/:email', async (req, res) => {
+        const email = req.query.email;
+        const info = req.body;
+        const query = { email: email };
+        const options = { upsert: true }
+        const updatedDoc = {
+          $set: info
+        }
+        const bookings = await userInfoCollection.updateOne(query, updatedDoc, options)
+        res.send(bookings);
+      })
   
+  
+      app.get('/user', verifyJWT, async (req, res) => {
+        const users = await userCollection.find().toArray();
+        res.send(users);
+      })
+  
+      app.post('/userInfo', async (req, res) => {
+        const info = req.body;
+        const result = await userInfoCollection.insertOne(info);
+        res.send(result);
+      })
+  
+      app.get('/purchase/:id', async (req, res) => {
+        const id = req.params.id;
+        const query = { _id: ObjectId(id) };
+        const tool = await toolsCollection.findOne(query);
+        res.send(tool);
+      });
+  
+      app.post('/review', async (req, res) => {
+        const reviews = req.body;
+        const result = await reviewCollection.insertOne(reviews);
+        res.send(result);
+      })
+      app.get('/reviews', async (req, res) => {
+        const query = {};
+        const cursor = reviewCollection.find(query);
+        const reviews = await cursor.toArray();
+        res.send(reviews);
+      })
