@@ -295,3 +295,12 @@ async function run() {
     }
   }
   run().catch(console.dir);
+  run().catch(console.dir);
+
+
+app.get('/', (req, res) => {
+  res.send('Server is running properly!')
+})
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`)
+})
