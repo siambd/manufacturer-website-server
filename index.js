@@ -130,3 +130,68 @@ async function run() {
         const result = await userInfoCollection.updateOne(filter, updatedDoc, options);
         res.send(result);
       })
+
+      // delete
+    app.delete('/inventory/:id', async (req, res) => {
+        const id = req.params.id;
+        const query = { _id: ObjectId(id) };
+        const result = await orderCollection.deleteOne(query);
+        res.send(result);
+      })
+      app.delete('/tool/:id', async (req, res) => {
+        const id = req.params.id;
+        const query = { _id: ObjectId(id) };
+        const result = await toolsCollection.deleteOne(query);
+        res.send(result);
+      })
+  
+      app.delete('/cancel/:id', async (req, res) => {
+        const id = req.params.id;
+        const query = { _id: ObjectId(id) };
+        const result = await orderCollection.deleteOne(query);
+        res.send(result);
+      })
+  
+  
+      app.put('/shipped/:id', async (req, res) => {
+        const id = req.params.id;
+        const shipped = req.body;
+        const query = { _id: ObjectId(id) };
+        const options = { upsert: true }
+        const updatedDoc = {
+          $set: {
+            shipped: shipped
+          }
+        };
+        const result = await userInfoCollection.updateOne(query, updatedDoc, options);
+        res.send(result);
+      })
+  
+      app.get('/manageInventory', async (req, res) => {
+        const query = {};
+        const cursor = orderCollection.find(query);
+        const inventories = await cursor.toArray();
+        res.send(inventories);
+      });
+  
+  
+      app.get('/admin/:email', async (req, res) => {
+        const email = req.params.email;
+        const user = await userCollection.findOne({ email: email });
+        const isAdmin = user.role === 'admin';
+        res.send({ admin: isAdmin })
+      })
+  
+      app.put('/user/:email', async (req, res) => {
+        const email = req.params.email;
+        const user = req.body;
+        const filter = { email: email };
+        const options = { upsert: true };
+        const updateDoc = {
+          $set: user,
+        };
+  
+        const result = await userCollection.updateOne(filter, updateDoc, options);
+        var token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
+        res.send({ result, token });
+      })
